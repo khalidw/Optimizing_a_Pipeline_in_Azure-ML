@@ -20,7 +20,7 @@ x, y = clean_data(ds)
 
 # TODO: Split data into train and test sets.
 
-X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size=0.3)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
 
 run = Run.get_context()
 
