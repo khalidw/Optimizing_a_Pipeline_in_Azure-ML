@@ -16,6 +16,9 @@ from azureml.data.dataset_factory import TabularDatasetFactory
 data_loc = "https://automlsamplenotebookdata.blob.core.windows.net/automl-sample-notebook-data/bankmarketing_train.csv"
 ds = TabularDatasetFactory.from_delimited_files(data_loc)
 
+
+#Save model for current iteration
+
 run = Run.get_context()
 
 def clean_data(data):
@@ -50,7 +53,7 @@ x, y = clean_data(ds)
 
 # TODO: Split data into train and test sets.
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=123)
 
 def main():
     # Add arguments to script
@@ -68,6 +71,10 @@ def main():
 
     accuracy = model.score(x_test, y_test)
     run.log("Accuracy", np.float(accuracy))
+
+    #Save model for current iteration, also include the value for C and max_iter in filename, random_state=
+    os.makedirs('outputs', exist_ok=True)
+    joblib.dump(model, 'outputs/hyperDrive_{}_{}'.format(args.C,args.max_iter))
 
 if __name__ == '__main__':
     main()
