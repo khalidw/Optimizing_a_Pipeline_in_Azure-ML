@@ -20,46 +20,36 @@ We use Logistric Regression algorithm from the SKLearn framework in conjuction w
 
 Pipeline consists of following steps:
 
-**Data collection**
+1. Data collection
+1. Data cleaning
+1. Data splitting
+1. Hyperparameter sampling
+1. Model training
+1. Model testing
+1. Early stopping policy evaluation
+1. Saving the model
 
-Dataset is collected from the link provided earlier using TabularDatasetFactory.
+We use a script **train.py**, to govern steps 1-3, 5, 6 and 8. Whereas step 4 and 7 is governed by hyperDrive. The overall execution of the pipeline is managed by hyperDrive. A brief description of each step is provided below.
 
-**Data cleaning**
+**Data collection:** Dataset is collected from the link provided earlier, using TabularDatasetFactory.
 
-Data cleaning involves dropping rows with empty values, one hot encoding, 
+**Data cleaning:** This process involves dropping rows with empty values and one hot encoding for categorical columns.
 
-**Data splitting**
+**Data splitting:** As a standard practice, datasets are split into train and test sets. This splitting of a dataset is helpful to validate/tune our model. For this experiment we split 70-30, 70% for training and 30% for testing.
 
-As a standard practice, the data is split into train and test set. We split 70-30
+**Hyperparameter selection:** Hyperparamters are adjustable parameters that let you control the model training process. This is a recurring step for each iteration of model training, controlled by hyperDrive.
 
-**Hyperparameter selection**
+There are two hyperparamters **C** and **max_iter**, **C** is the inverse regularization strength whereas **max_iter** is the maximum iteration to converge for the SKLearn Logistic Regression. We have used random parameter sampling to sample over a discrete set of values.
 
-Hyperparamters were selected for a particular training. This is a recurring step for wach iteration, controlled by hperDrive
+Random parameter sampling is great for discovery and getting hyperparameter combinations that you would not have guessed intuitively, although it often requires more time to execute. The parameter search space used for **C**: is \[1,2,3,4,5] and for **max_iter**: is \[80,100,120,150,170,200]
 
-**Model training**
+**Model training:** Once we have train and test dataset available and have selected our hyperparameters for a particular iteration, we are all set for training our model. This process is also called as model fitting.
 
-Now model is ready for training, also called as fitting.
+**Model testing:** Test dataset from previous split is used to test the trained model, metrics are generated and logged, these metrics are then used to benchmark the model. In our case we are using accuracy as model performance benchmark.
 
-**Model testing**
+**Early stopping policy evaluation:** The benchmark metric from model testing is then evaluated using hyperDrive early stopping policy. Execution of the pipeline is stopped if conditions specified by the policy are met. We have used the [BanditPolicy](https://docs.microsoft.com/en-us/python/api/azureml-train-core/azureml.train.hyperdrive.banditpolicy?view=azure-ml-py). Bandit policy is based on slack factor/slack amount and evaluation interval. Bandit terminates runs where the primary metric is not within the specified slack factor/slack amount compared to the best performing run. This helps to improves computational efficiency. For this experiment the configuratin used is; evaluation_interval=1, slack_factor=0.2, and delay_evaluation=5. This configration means that the policy would be applied to every 1\*5 iteration of the pipeline and if 1.2*\value of the benchmark metric for current iteration is smaller than the best metric value so far, the run will be cancelled.
 
-Test dataset from previous split is used to test the model, metrics are generated and logged, used to benchmark the model
-
-**Model save**
-
-Model is saved with the information of hyperparameters, in case if it is required for deployment
-
-**What are the benefits of the parameter sampler you chose?**
-There are two arguments **C** and **max_iter**, **C** is the inverse regularization strength whereas **max_iter** is the maximum iteration to converge for the SKLearn Logistic Regression.
-
-I have used random parameter sampling to sample over a discrete set of values. For **C**: \[1,2,3,4,5], for **max_iter**: \[80,100,120,150,170,200]
-Random parameter sampling is great for discovery and getting hyperparameter combinations that you would not have guessed intuitively, although it often requires more time to execute.
-
-**What are the benefits of the early stopping policy you chose?**
-I have used [BanditPolicy](https://docs.microsoft.com/en-us/python/api/azureml-train-core/azureml.train.hyperdrive.banditpolicy?view=azure-ml-py) for early stopping. Bandit Policy defines an early termination policy based on slack criteria, and a frequency and delay interval for evaluation.
-
-An evaluation_interval=1, slack_factor=0.2, and delay_evaluation=5 was used.
-
-Benefits of this policy ....
+**Saving the model:** The trained model is then saved, this is important if we want to deploy our model or use it in some other experiments.
 
 ## AutoML
 **In 1-2 sentences, describe the model and hyperparameters generated by AutoML.**
