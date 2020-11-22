@@ -79,16 +79,16 @@ AutoML uses the provided dataset to fit on a wide variety of algorithms. It supp
 
 In our experiment we found out VotingEnsemble to be the best model based on the accuracy metric. The accuracy score for this model was `0.9169044006069802`.
 
-The VotingEnsemble consisted of six algorithms; the algorithms and their corresponding weightage are summarized in the table below. Parameter details of each individual algorithm can be found in the corresponding Jupyter Notebook.
+The VotingEnsemble consisted of six algorithms; the algorithms, their corresponding weightages and a few of the individual parameters including `learning_rate`, `n_estimators`, and `random_state` are summarized in the table below. Further details of each individual algorithm can be found in the corresponding Jupyter Notebook.
 
-| Algorithm | Weightage |
-| --------- | --------- |
-| xgboostclassifier with maxabsscaler | 0.06666666666666667 |
-| lightgbmclassifier with maxabsscaler | 0.4666666666666667 |
-| xgboostclassifier with sparsenormalizer | 0.2 |
-| sgdclassifierwrapper with minmaxscaler | 0.06666666666666667 |
-| sgdclassifierwrapper with standardscalerwrapper | 0.06666666666666667 |
-| sgdclassifierwrapper with standardscalerwrapper | 0.13333333333333333 |
+| Algorithm | Weightage | learning_rate | n_estimators| random_state |
+| --------- | --------- | ------------- | ----------- | ------------ |
+| xgboostclassifier with maxabsscaler | 0.06666666666666667 | 0.1 | 100 | 0 |
+| lightgbmclassifier with maxabsscaler | 0.4666666666666667 | 0.1 | 100 | None |
+| xgboostclassifier with sparsenormalizer | 0.2 | 0.1 | 25 | 0 |
+| sgdclassifierwrapper with minmaxscaler | 0.06666666666666667 | constant | - | None |
+| sgdclassifierwrapper with standardscalerwrapper | 0.06666666666666667 | constant | - | None |
+| sgdclassifierwrapper with standardscalerwrapper | 0.13333333333333333 | balanced | - | None |
 
 A [voting ensemble](https://machinelearningmastery.com/voting-ensembles-with-python/) is an ensemble machine learning model that combines the predictions from multiple other models.
 
